@@ -16,14 +16,14 @@ int main(void) {
                 printf("Setup do wiringPi falhou!\n");
                 return -1;
         }
-        int minValue = 25; 
-		int v = minValue; 
-		int maxValue = 123; 
-        softPwmCreate(ServoPin,0,maxValue);
+        int minValue = 23; 
+	int v = minValue; 
+	int maxValue = 123; 
+        softPwmCreate(ServoPin,minValue,maxValue);
         pinMode(ServoPin, PWM_OUTPUT);
-		pwmSetMode(PWM_MODE_MS); 
-		pwmSetClock(384); //clock at 50kHz (20us tick)
-		pwmSetRange(1000); //range at 1000 ticks (20ms)
+	pwmSetMode(PWM_MODE_MS); 
+	pwmSetClock(384); //clock at 50kHz (20us tick)
+	//pwmSetRange(1024); //range at 1000 ticks (20ms)
 
         
         while(1) {
@@ -33,7 +33,7 @@ int main(void) {
 				}			
                 pwmWrite(1, v);    
                 printf("V %i\n",v);
-                delay(3000); 
+                delay(1000); 
                 v += 5;  
 
                       
