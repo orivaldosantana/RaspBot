@@ -30,7 +30,7 @@ int main(void) {
 		if (v > maxValue) {
 			v = minValue; 
 		}			
-		pwmWrite(1, v);    
+		pwmWrite(ServoPin, v);    
 		printf("V %i\n",v);
 		delay(1000); 
 		v += 5;  
