@@ -19,6 +19,8 @@
 int minValue;
 int pwmRange;
 int maxValue; 
+
+int vel; // velocidade do motor 
     
 int setupRobot() {
 	if(wiringPiSetup() == -1) {  
@@ -29,6 +31,7 @@ int setupRobot() {
  	pwmRange= 125;
 	maxValue = pwmRange; 
  
+	vel = 20;
 	// Servo motor direito 
 	softPwmCreate(servoRightPin,minValue,pwmRange);
 	pinMode(servoRightPin, PWM_OUTPUT);
@@ -46,7 +49,7 @@ int setupRobot() {
  */
 int turnOnServos(int _left, int _right ) {
 	int rightZero = 75;
-	int leftZero = 83; 
+	int leftZero = 82; 
 	pwmWrite(servoLeftPin, leftZero - _left); 
 	
 	pwmWrite(servoRightPin,rightZero +  _right); 
@@ -81,19 +84,52 @@ void testeCalibration() {
 
 void goForward() {
 	
-	turnOnServos(10,10); 
+	turnOnServos(vel,vel); 
 }
+
+void stop() {
+	
+	turnOnServos(0,0); 
+}
+
 
 void goBackward() {
-	turnOnServos(-10,-10); 
+	turnOnServos(-vel,-vel); 
+}
+
+void turnLeft(){
+	turnOnServos(vel,-vel); 
 }
  
-int main(void) {
-
-    if(setupRobot() != -1) {  
+void turnRight(){
+	turnOnServos(-vel,vel); 
+}
  
-		 
-		goForward(); 
+
+void execComand(char *command) {
+		if ( strcmp(command, "b") == 0 ) {
+			goBackward(); 
+		}
+		else if ( strcmp(command, "f") == 0 ) {
+			goForward();
+		}
+		else if ( strcmp(command, "l") == 0 ) {
+			turnLeft();
+		}
+		else if ( strcmp(command, "r") == 0 ) {
+			turnRight();
+		}
+		
+	
+}
+ 
+int main(int argc, char *argv[]) {
+
+    if(setupRobot() != -1) {  	
+		printf(" > %s\n",argv[1]);
+		execComand(argv[1]);
+		delay(300);
+		stop(); 
 	}
  
 }
