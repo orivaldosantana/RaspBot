@@ -33,6 +33,6 @@ int main ( int argc,char **argv ) {
     double secondsElapsed = difftime ( timer_end,timer_begin );
     cout<< secondsElapsed<<" seconds for "<< nCount<<"  frames : FPS = "<<  ( float ) ( ( float ) ( nCount ) /secondsElapsed ) <<endl;
     //save image 
-    cv::imwrite("raspicam_cv_image.jpg",image);
+    cv::imwrite("raspicam_cv_image2.jpg",image);
     cout<<"Image saved at raspicam_cv_image.jpg"<<endl;
 }
