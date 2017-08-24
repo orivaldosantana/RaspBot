@@ -10,7 +10,8 @@
 
 #include <wiringPi.h>
 #include <softPwm.h>
-#include <stdio.h>
+#include <string>
+#include <iostream>
 
  
 #define servoRightPin 26 // BCM 13
@@ -38,7 +39,7 @@ int turnOnServos(int _left, int _right ) {
     
 int setupRobot() {
 	if(wiringPiSetup() == -1) {  
-			printf("Setup do wiringPi falhou!\n");
+			std::cout << "Setup do wiringPi falhou!" << std::endl; 
 			return -1;
 	}
     minValue = 25; 
@@ -66,12 +67,12 @@ void auxServoCalibrating(int _servoPin) {
 	int i;
 	for (i=minValue; i < maxValue; i += testStep ) {
 		pwmWrite(_servoPin, i);
-		printf("V %i\n",i);
+		std::cout << "V " << i << std::endl; 
 		delay(timeDelay); 
 	}
 	for (i = maxValue; i > minValue; i -= testStep) {
 		pwmWrite(_servoPin, i);
-		printf("V %i\n",i);
+		std::cout << "V " << i << std::endl; 
 		delay(timeDelay); 
 	} 
 }
@@ -109,25 +110,26 @@ void turnRight(){
 }
  
 
-void execComand(char *command) {
-		if ( strcmp(command, "b") == 0 ) {
+void execComand(std::string command) {
+		if ( command.compare("b") == 0 ) {
 			goBackward(); 
 		}
-		else if ( strcmp(command, "f") == 0 ) {
+		else if ( command.compare( "f") == 0 ) {
 			goForward();
 		}
-		else if ( strcmp(command, "l") == 0 ) {
+		else if (command.compare( "l") == 0 ) {
 			turnLeft();
 		}
-		else if ( strcmp(command, "r") == 0 ) {
+		else if ( command.compare( "r") == 0 ) {
 			turnRight();
 		}
 }
  
 int main(int argc, char *argv[]) {
 
+	std::string s(argv[1]); 
     if(setupRobot() != -1) {  	
-		printf(" > %s\n",argv[1]);
+		std::cout << " > " << s << std::endl; 
 		execComand(argv[1]);
 		delay(300);
 		stop(); 

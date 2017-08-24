@@ -13,38 +13,20 @@
 cv::RNG rng(12345);
 
 using namespace std; 
- 
-int main ( int argc,char **argv ) {
-   
- 
-    raspicam::RaspiCam_Cv Camera;
-    cv::Mat frame;
-    cv::Mat frame_threshold;
-    
-    vector<vector<cv::Point> > contours;
+
+/**
+ * Funções para criar um classe RaspCam CV de rastreamento de cor
+ */ 
+	cv::Mat frame_threshold;
+	vector<vector<cv::Point> > contours;
     vector<cv::Vec4i> hierarchy;
- 
-	// pixel 
-	cv::Vec3b p; 
-	int imgHeight = 480; 
-	int imgWidth = 640; 
-	cv::Point pAlvo(imgWidth/2,imgHeight/2); 
-    //set camera params
-    Camera.set( CV_CAP_PROP_FORMAT, CV_8UC3 ); // 8U -> 8 bits -> uchar e C3 -> três canais 
-    Camera.set( CV_CAP_PROP_FRAME_WIDTH, 640); 
-    Camera.set( CV_CAP_PROP_FRAME_HEIGHT, 480);
-    //Open camera
-    cout<<"Opening Camera..."<<endl;
-    if (!Camera.open()) {cerr<<"Error opening the camera"<<endl;return -1;}
-    //Start capture
-    cout<<"Capturing frames ...."<<endl;
-    cv::namedWindow("Video Capture", cv::WINDOW_AUTOSIZE);
-    cv::namedWindow("Video Threshold", cv::WINDOW_AUTOSIZE);
-    cv::namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
-    while((char)cv::waitKey(1)!='q'){
-        Camera.grab();
-        Camera.retrieve ( frame);
-        cv::inRange(frame, cv::Scalar(0,0,40), cv::Scalar(10,15,80),frame_threshold);
+    int findObjectByColor(cv::Mat &_frame) {
+		
+		// pixel 
+		cv::Vec3b p;
+		cv::Point pAlvo(0,0); 
+		
+		cv::inRange(_frame, cv::Scalar(0,60,95), cv::Scalar(5,120,130),frame_threshold);
         
         cv::imshow("Video Threshold",frame_threshold);
         
@@ -71,6 +53,7 @@ int main ( int argc,char **argv ) {
 			
 				circle( drawing, mc[i], 30, color, -1, 8, 0 );
 				cout << " " << contours[i].size() ; 
+				pAlvo = mc[i]; 
 			}
 			
 		}
@@ -80,12 +63,45 @@ int main ( int argc,char **argv ) {
 		
 		imshow( "Contours", drawing );
 
-        circle(frame, pAlvo, 20, cv::Scalar(0,255,0),2); 
+        circle(_frame, pAlvo, 20, cv::Scalar(0,255,0),2); 
  
-        cv::imshow("Video Capture",frame);
+        cv::imshow("Video Capture",_frame);
         
-        p = frame.at<cv::Vec3b>(pAlvo); 
-        cout << p << endl;
+        
+        //p = _frame.at<cv::Vec3b>(pAlvo); 
+        return pAlvo.x; 
+		
+	}   
+ 
+ 
+int main ( int argc,char **argv ) {
+   
+ 
+    raspicam::RaspiCam_Cv Camera;
+    cv::Mat frame;
+
+ 
+	int imgHeight = 480; 
+	int imgWidth = 640; 
+	
+    //set camera params
+    Camera.set( CV_CAP_PROP_FORMAT, CV_8UC3 ); // 8U -> 8 bits -> uchar e C3 -> três canais 
+    Camera.set( CV_CAP_PROP_FRAME_WIDTH, 640); 
+    Camera.set( CV_CAP_PROP_FRAME_HEIGHT, 480);
+    //Open camera
+    cout<<"Opening Camera..."<<endl;
+    if (!Camera.open()) {cerr<<"Error opening the camera"<<endl;return -1;}
+    //Start capture
+    cout<<"Capturing frames ...."<<endl;
+    cv::namedWindow("Video Capture", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Video Threshold", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+    while((char)cv::waitKey(1)!='q'){
+		
+        Camera.grab();
+        Camera.retrieve ( frame);
+        
+        cout << findObjectByColor(frame) << endl;
          
     }
     cout<<"Stop camera..."<<endl;
